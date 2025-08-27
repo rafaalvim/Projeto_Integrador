@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Loja simples</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 980px; margin: 40px auto; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; }
+    .card img { width: 100%; height: 140px; object-fit: cover; border-radius: 6px; }
+    .titulo { margin: 10px 0 6px; font-size: 1.05rem; font-weight: bold; }
+    .desc { color: #555; font-size: 0.92rem; margin-bottom: 8px; min-height: 40px; }
+    .preco { font-weight: bold; margin: 8px 0; }
+    button { padding: 8px 12px; cursor: pointer; border-radius: 6px; border: 1px solid #ccc; background: #f7f7f7; }
+    a { text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Minha Loja</h1>
+    <a href="carrinho.html">🛒 Ver carrinho</a>
+  </header>
+
+  <div class="grid" id="lista-produtos"></div>
+
+  <script>
+    // Agora cada produto tem img e desc
+    var produtos = [
+      { id: 1, nome: "Camiseta", preco: 49.90, img: "https://picsum.photos/seed/camiseta/400/300", desc: "Camiseta 100% algodão, confortável e leve." },
+      { id: 2, nome: "Boné",     preco: 39.90, img: "https://picsum.photos/seed/bone/400/300",     desc: "Boné com ajuste traseiro e aba curva." },
+      { id: 3, nome: "Caneca",   preco: 29.90, img: "https://picsum.photos/seed/caneca/400/300",   desc: "Caneca de cerâmica 300ml, ótima para café." },
+      { id: 4, nome: "Mochila",  preco: 99.90, img: "https://picsum.photos/seed/mochila/400/300",  desc: "Mochila resistente, com vários bolsos." }
+    ];
+
+    function renderProdutos() {
+      var lista = document.getElementById('lista-produtos');
+      lista.innerHTML = '';
+      produtos.forEach(function(p) {
+        var card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = ''
+          + '<img src="'+ p.img +'" alt="'+ p.nome +'">'
+          + '<div class="titulo">'+ p.nome +'</div>'
+          + '<div class="desc">'+ p.desc +'</div>'
+          + '<div class="preco">R$ '+ p.preco.toFixed(2) +'</div>'
+          + '<button onclick="adicionarAoCarrinho('+ p.id +')">Adicionar ao carrinho</button>';
+        document.getElementById('lista-produtos').appendChild(card);
+      });
+    }
+
+    // Util: ler/gravar carrinho
+    function getCarrinho() {
+      var c = localStorage.getItem('carrinho');
+      return c ? JSON.parse(c) : []; // [{id, nome, preco, qtd, img}]
+    }
+    function setCarrinho(carrinho) {
+      localStorage.setItem('carrinho', JSON.stringify(carrinho));
+    }
+
+    function adicionarAoCarrinho(idProduto) {
+      var produto = produtos.find(function(p){ return p.id === idProduto; });
+      if (!produto) return;
+
+      var carrinho = getCarrinho();
+      var existente = carrinho.find(function(item){ return item.id === produto.id; });
+      if (existente) {
+        existente.qtd += 1;
+      } else {
+        carrinho.push({ id: produto.id, nome: produto.nome, preco: produto.preco, qtd: 1, img: produto.img });
+      }
+      setCarrinho(carrinho);
+      alert('✅ ' + produto.nome + ' adicionado!');
+    }
+
+    renderProdutos();
+  </script>
+</body>
+</html>

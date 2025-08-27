@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cotação do Dólar (USD → BRL)</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 720px; margin: 40px auto; line-height: 1.5; }
+    button { padding: 10px 14px; cursor: pointer; }
+    #valor { font-size: 2rem; margin: 12px 0; }
+    #status { color: #555; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Cotação do Dólar</h1>
+  <p>Fonte: <code>economia.awesomeapi.com.br</code></p>
+  <p>Olá, sejam bem-vindos ao nosso site de estudos Brasil Fora da Caixa!
+Neste espaço, vamos explorar a Literatura Brasileira de forma prática e interativa. Descubra como a leitura pode transformar sua vida. Aprender nunca foi tão fácil e envolvente!</p>
+
+  <button onclick="pegarCotacao()">Atualizar cotação</button>
+  <div id="status"></div>
+
+  <div id="valor">R$ --</div>
+  <div id="atualizado"></div>
+<iframe src="https://br.widgets.investing.com/top-cryptocurrencies?theme=darkTheme&roundedCorners=true" width="100%" height="100%" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe><div class="poweredBy" style="font-family: Arial, Helvetica, sans-serif;">Desenvolvido por <a href="https://br.investing.com?utm_source=WMT&amp;utm_medium=referral&amp;utm_campaign=TOP_CRYPTOCURRENCIES&amp;utm_content=Footer%20Link" target="_blank" rel="nofollow">Investing.com</a></div>
+
+
+
+
+
+<a class="weatherwidget-io" href="https://forecast7.com/en/40d71n74d01/new-york/" data-label_1="NEW YORK" data-label_2="WEATHER" data-theme="original" >NEW YORK WEATHER</a>
+<script>
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+</script>
+
+
+
+
+<div id="ww_4fdd3cc8e172b" v='1.3' loc='id' a='{"t":"horizontal","lang":"pt","sl_lpl":1,"ids":[],"font":"Arial","sl_ics":"one_a","sl_sot":"celsius","cl_bkg":"image","cl_font":"#FFFFFF","cl_cloud":"#FFFFFF","cl_persp":"#81D4FA","cl_sun":"#FFC107","cl_moon":"#FFC107","cl_thund":"#FF5722"}'>Fonte de dados meteorológicos: <a href="https://wetterlang.de" id="ww_4fdd3cc8e172b_u" target="_blank">Wetter vorhersage 30 tage</a></div><script async src="https://app3.weatherwidget.org/js/?id=ww_4fdd3cc8e172b"></script>
+
+
+
+  <script>
+    function pegarCotacao() {
+      var statusEl = document.getElementById('status');
+      var valorEl = document.getElementById('valor');
+      var atualizadoEl = document.getElementById('atualizado');
+
+      statusEl.textContent = 'Carregando...';
+
+      // Endpoint público: USD-BRL
+      fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL')
+        .then(function(res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        })
+        .then(function(dados) {
+          // A resposta vem como { "USDBRL": { ... } }
+          var info = dados.USDBRL;
+
+          // "bid" é o valor de compra (string). Converte para número.
+          var bid = Number(info.bid); // ex.: 5.43
+
+          // Exibir com 2 casas decimais
+          valorEl.textContent = 'R$ ' + bid.toFixed(2);
+
+          // Mostrar data/hora quando disponível
+          if (info.create_date) {
+            atualizadoEl.textContent = 'Atualizado em: ' + info.create_date;
+          } else if (info.timestamp) {
+            var dt = new Date(Number(info.timestamp) * 1000);
+            atualizadoEl.textContent = 'Atualizado em: ' + dt.toLocaleString();
+          } else {
+            atualizadoEl.textContent = '';
+          }
+
+          statusEl.textContent = 'Pronto ✅';
+        })
+        .catch(function(err) {
+          console.error(err);
+          statusEl.textContent = 'Erro ao buscar cotação ❌';
+          valorEl.textContent = 'R$ --';
+          atualizadoEl.textContent = '';
+        });
+    }
+
+    // (Opcional) carregar ao abrir a página
+    pegarCotacao();
+  </script>
+
+  <br><br>
+
+<iframe src="https://fr.euronews.com/embed/timeline" scrolling="no"
+        style="border:none; min-height:425px; width:100%; height:100%;"></iframe>
+
+
+
+        <rssapp-ticker id="J8Gb3TP597Iy04G2"></rssapp-ticker><script src="https://widget.rss.app/v1/ticker.js" type="text/javascript" async></script>
+        
+</body>
+</html>

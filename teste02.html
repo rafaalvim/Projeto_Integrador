@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Clima simples</title>
+</head>
+<body>
+  <h1>Temperatura da Cidade 🌤️</h1>
+  <input id="cidade" placeholder="Digite o nome da cidade">
+  <button onclick="carregarCidade()">Mostrar temperatura</button>
+  <div id="resultado"></div>
+
+  <script>
+    function carregarCidade() {
+      var cidade = document.getElementById('cidade').value;
+      carregarClima(cidade);
+    }
+
+    function carregarClima(cidade) {
+      fetch("https://wttr.in/" + encodeURIComponent(cidade) + "?format=j1")
+        .then(function(resposta) {
+          return resposta.json();   
+        })
+        .then(function(dados) {
+          // Pega o nome da cidade que a API entendeu
+          var cidadeAPI = dados.nearest_area[0].areaName[0].value;
+
+          // Se não bate com o que o usuário digitou, mostra aviso
+          if (!cidadeAPI || cidadeAPI.toLowerCase() !== cidade.toLowerCase()) {
+            document.getElementById("resultado").innerHTML =
+              "Não foi possível encontrar a cidade '" + cidade + "'.<br>" +
+              "A API sugeriu: <strong>" + cidadeAPI + "</strong>";
+            return;
+          }
+
+          // Se bateu, mostra a temperatura
+          var temp = dados.current_condition[0].temp_C;
+
+          document.getElementById("resultado").innerHTML =
+            "<p>Agora em " + cidadeAPI + " está <strong>" + temp + "°C</strong></p>";
+        })
+        .catch(function(erro) {
+          console.log("Erro:", erro);
+          document.getElementById("resultado").innerHTML =
+            "Ocorreu um erro ao buscar os dados.";
+        });
+    }
+  </script>
+</body>
+</html>

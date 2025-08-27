@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Carrinho</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 980px; margin: 40px auto; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; vertical-align: middle; }
+    .thumb { width: 64px; height: 48px; object-fit: cover; border-radius: 6px; }
+    .qtd { display: inline-flex; gap: 6px; align-items: center; }
+    button { padding: 6px 10px; cursor: pointer; border-radius: 6px; border: 1px solid #ccc; background: #f7f7f7; }
+    .acoes { display: flex; gap: 8px; }
+    .total { margin-top: 16px; font-size: 1.2rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Seu carrinho 🛒</h1>
+    <a href="index.html">← Voltar à loja</a>
+  </header>
+
+  <div id="conteudo"></div>
+  <div class="total" id="total"></div>
+
+  <div class="acoes" style="margin-top:12px;">
+    <button onclick="limparCarrinho()">Limpar carrinho</button>
+    <button onclick="finalizar()">Finalizar compra</button>
+  </div>
+
+  <script>
+    function getCarrinho() {
+      var c = localStorage.getItem('carrinho');
+      return c ? JSON.parse(c) : [];
+    }
+    function setCarrinho(carrinho) {
+      localStorage.setItem('carrinho', JSON.stringify(carrinho));
+    }
+
+    function render() {
+      var carrinho = getCarrinho();
+      var conteudo = document.getElementById('conteudo');
+      var totalEl = document.getElementById('total');
+
+      if (!carrinho.length) {
+        conteudo.innerHTML = "<p>Seu carrinho está vazio.</p>";
+        totalEl.textContent = "";
+        return;
+      }
+
+      var linhas = carrinho.map(function(item, idx) {
+        var subtotal = item.preco * item.qtd;
+        return ''
+          + '<tr>'
+          +   '<td><img class="thumb" src="'+ (item.img || '') +'" alt="'+ item.nome +'"></td>'
+          +   '<td>'+ item.nome +'</td>'
+          +   '<td>R$ '+ item.preco.toFixed(2) +'</td>'
+          +   '<td>'
+          +     '<span class="qtd">'
+          +       '<button onclick="alterarQtd('+ idx +', -1)">-</button>'
+          +       '<strong>'+ item.qtd +'</strong>'
+          +       '<button onclick="alterarQtd('+ idx +', 1)">+</button>'
+          +     '</span>'
+          +   '</td>'
+          +   '<td>R$ '+ subtotal.toFixed(2) +'</td>'
+          +   '<td><button onclick="remover('+ idx +')">Remover</button></td>'
+          + '</tr>';
+      }).join('');
+
+      conteudo.innerHTML = ''
+        + '<table>'
+        +   '<thead>'
+        +     '<tr>'
+        +       '<th></th>'
+        +       '<th>Produto</th>'
+        +       '<th>Preço</th>'
+        +       '<th>Qtd</th>'
+        +       '<th>Subtotal</th>'
+        +       '<th></th>'
+        +     '</tr>'
+        +   '</thead>'
+        +   '<tbody>'+ linhas +'</tbody>'
+        + '</table>';
+
+      var total = carrinho.reduce(function(acc, item){ return acc + item.preco * item.qtd; }, 0);
+      totalEl.textContent = "Total: R$ " + total.toFixed(2);
+    }
+
+    function alterarQtd(index, delta) {
+      var carrinho = getCarrinho();
+      if (!carrinho[index]) return;
+      carrinho[index].qtd += delta;
+      if (carrinho[index].qtd <= 0) carrinho.splice(index, 1);
+      setCarrinho(carrinho);
+      render();
+    }
+
+    function remover(index) {
+      var carrinho = getCarrinho();
+      carrinho.splice(index, 1);
+      setCarrinho(carrinho);
+      render();
+    }
+
+    function limparCarrinho() {
+      localStorage.removeItem('carrinho');
+      render();
+    }
+
+    function finalizar() {
+      var total = document.getElementById('total').textContent || '';
+      alert("Obrigado! " + total);
+      limparCarrinho();
+    }
+
+    render();
+  </script>
+</body>
+</html>

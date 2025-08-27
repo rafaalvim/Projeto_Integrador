@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Exemplo de API</title>
+</head>
+<body>
+  <h1>Gatos aleatórios 🐱</h1>
+  <button onclick="carregarGato()">Gerar Gato</button>
+  <div id="resultado"></div>
+
+  <script>
+    function carregarGato() {
+      // 1. Fazer a requisição
+      fetch("https://api.thecatapi.com/v1/images/search")
+        .then(resposta => resposta.json()) // 2. Converter para JSON
+        .then(dados => {
+          // 3. Pegar a URL da imagem
+          let imagem = dados[0].url;
+          // 4. Exibir no site
+          document.getElementById("resultado").innerHTML = 
+            `<img src="${imagem}" width="300">`;
+        })
+        .catch(erro => console.log("Erro:", erro));
+    }
+  </script>
+</body>
+</html>
